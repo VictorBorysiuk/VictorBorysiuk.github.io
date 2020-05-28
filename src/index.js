@@ -1,4 +1,4 @@
-import PIXI from './js/pixi';
+import PIXI from 'pixi.js';
 
 const width = 800;
 const height = 450;
