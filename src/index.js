@@ -1,6 +1,5 @@
-//const PIXI =require('./js/pixi.js');
-import { Application } from 'pixi.js';
-import { Graphics } from 'pixi.js';
+import { Application } from "pixi.js";
+import { Graphics } from "pixi.js";
 
 const width = 800;
 const height = 450;
