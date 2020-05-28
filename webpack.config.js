@@ -8,7 +8,21 @@ let conf = {
     },
     devServer: {
         overlay: true
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel-loader',
+                query: { presets: ["@babel/preset-env"] }
+            },
+        ]
     }
 };
 
-module.exports = conf;
+module.exports = (env, options) => {
+    let production = options.mode === 'production';
+    conf.devtool = production? 'source-map':'eval-sourcemap';
+    return conf
+};

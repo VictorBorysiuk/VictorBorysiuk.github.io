@@ -4,10 +4,10 @@
   "description": "simple game with PIXI JS",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --mode -development --open",
-    "build": "webpack"
-  },
+    "production": "webpack --mode production --config webpack.config.prod.js",
+    "build": "webpack --mode development --config webpack.config.dev.js",
+    "start": "webpack-dev-server --config webpack.config.dev.js"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VictorBorysiuk/VictorBorysiuk.github.io.git"
@@ -24,12 +24,24 @@
   },
   "homepage": "https://github.com/VictorBorysiuk/VictorBorysiuk.github.io#readme",
   "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.1",
+    "@babel/node": "^7.10.1",
+    "@babel/preset-env": "^7.10.1",
+    "@babel/preset-stage-3": "^7.8.3",
+    "babel-loader": "^8.1.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "copy-webpack-plugin": "^6.0.1",
+    "css-loader": "^3.5.3",
+    "html-webpack-plugin": "^4.3.0",
     "path": "^0.12.7",
+    "pixi.js": "^5.2.4",
+    "style-loader": "^1.2.1",
+    "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"
   },
-  "dependencies": {
-    "pixi.js": "^5.2.4"
-  }
+  "dependencies": {}
 }
