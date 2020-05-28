@@ -4,7 +4,7 @@ let conf = {
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: 'main'
+        filename: 'main.js'
     },
     devServer: {
         overlay: true
