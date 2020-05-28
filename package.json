@@ -7,7 +7,7 @@
     "production": "webpack --mode production --config webpack.config.prod.js",
     "build": "webpack --mode development --config webpack.config.dev.js",
     "start": "webpack-dev-server --config webpack.config.dev.js"
-},
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VictorBorysiuk/VictorBorysiuk.github.io.git"
@@ -37,6 +37,7 @@
     "html-webpack-plugin": "^4.3.0",
     "path": "^0.12.7",
     "pixi.js": "^5.2.4",
+    "schema-utils": "^2.6.6",
     "style-loader": "^1.2.1",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.43.0",

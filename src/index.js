@@ -1,5 +1,7 @@
 //const PIXI =require('./js/pixi.js');
-import * as PIXI from 'pixi.js'
+import { Application } from 'pixi.js';
+import { Graphics } from 'pixi.js';
+
 const width = 800;
 const height = 450;
 
@@ -25,7 +27,7 @@ document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
 
 const model = {
     createCanvas: function() {
-        app = new PIXI.Application(appOptions); //создае холст
+        app = new Application(appOptions); //создае холст
         document.getElementById("showPixi").appendChild(app.view); //выводим его в тело страницы 
     },
 
@@ -58,7 +60,7 @@ const model = {
         const shapesY = y || -100; 
         const shapesX = x || Math.floor(Math.random() * inAreaX);
 
-        const shapes = new PIXI.Graphics(); //создаем новый графический элемент
+        const shapes = new Graphics(); //создаем новый графический элемент
 
         shapes.beginFill(colors[rand], 1);
         const diffrendShapes = ['Triangle','Rect', 'Pentagon', 'Hexagon', 'Circle', 'Ellipse', 'Random'];
