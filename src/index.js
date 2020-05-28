@@ -1,4 +1,7 @@
-import PIXI from 'pixi.js';
+import * as PIXI from 'pixi.js';
+/* import (* as projection from) 'pixi-projection';
+import _slicedToArray from '@babel/runtime/helpers/esm/slicedToArray';
+import _objectWithoutProperties from '@babel/runtime/helpers/esm/objectWithoutProperties' */
 
 const width = 800;
 const height = 450;
