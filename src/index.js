@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js';
+
 const width = 800;
 const height = 450;
 
@@ -51,7 +53,7 @@ const model = {
     drawShapes: function(x=0,y=0) {
         let areaShapes = 0;
         
-        rand = Math.floor(Math.random() * colors.length);
+        let rand = Math.floor(Math.random() * colors.length);
         const inAreaX = width - 100; 
         const shapesY = y || -100; 
         const shapesX = x || Math.floor(Math.random() * inAreaX);
@@ -106,7 +108,7 @@ const model = {
 
         shapes.interactive = true; //делаем круг интерактивным
         shapes.buttonMode = true; //меняем курсор при наведении
-        pixels = app.renderer.extract.pixels(shapes);
+        let pixels = app.renderer.extract.pixels(shapes);
         shapes.areaShapes = pixels.length;
         shapes.live = true; //указываем что наш шарик жив :)
         shapes.type = type;
