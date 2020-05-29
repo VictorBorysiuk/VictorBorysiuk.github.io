@@ -33,13 +33,7 @@ window.onload = main;
         document.getElementById("GravityValue").innerHTML = gravity;
         document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
         PIXI.utils.skipHello();
-/* class InitProperty {
-   
-    constructor(){
-        
-    }
 
-} */
 
 class Model {
 
@@ -141,10 +135,7 @@ class Model {
         shapes.on('click', controller.clearFigure); //добавляем возможность при клике на фигуру удалить её            
                 
     }
-    /* getApp(){
-        
-        return this.app;
-    } */
+
 
 }
 

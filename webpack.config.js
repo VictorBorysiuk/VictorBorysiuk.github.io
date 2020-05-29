@@ -9,6 +9,7 @@ let conf = {
     output: {
         path: path.resolve(__dirname, './dist'),
         filename:'[name].[contenthash].js'
+
     },
     plugins:[
         new HTMLWebpackPlugin({
