@@ -1,51 +1,34 @@
 import * as PIXI from 'pixi.js';
 
-const main = () => {
-    const model = new Model();
-    const view = new View();
-    const controller = new Controller( model, view);
+let canvasContainer = document.getElementById("showPixi");
 
-    controller.loadGame();
+const width = canvasContainer.innerWidth || 726;
+const height = canvasContainer.innerHeight || width/2;
+
+const appOptions = {  
+  width: width,
+  height: height,
+  resolution: window.devicePixelRatio,
+  roundPixels: true,
+  transparent: false,
+  backgroundColor: 0xdbe4c5,
 };
 
-window.onload = main;
+let app; 
+const colors = [0xFFFF0B, 0xFF700B, 0x4286f4, 0x4286f4, 0xf441e8, 0x8dff6d, 0x41ccc9, 0xe03375, 0x95e032, 0x77c687, 0x43ba5b, 0x0ea3ba]; //массив цветов
+let gravity = 4;
+let figuresAmount = 0; //количество созданных фигур
+const figure = []; //массив хранящий нашу фигуру
+let NumberOfShapesPesSec = 1;
 
-    let app;
-    let canvasContainer = document.getElementById("showPixi");
-    let width = canvasContainer.innerWidth || 726;
-    let height = canvasContainer.innerHeight || width/2;
-    let appOptions = {  
-        width: width,
-        height: height,
-        resolution: window.devicePixelRatio,
-        roundPixels: true,
-        transparent: false,
-        backgroundColor: 0xdbe4c5,
-        };
-
-        
-        const colors = [0xFFFF0B, 0xFF700B, 0x4286f4, 0x4286f4, 0xf441e8, 0x8dff6d, 0x41ccc9, 0xe03375, 0x95e032, 0x77c687, 0x43ba5b, 0x0ea3ba]; //массив цветов
-        let gravity = 4;
-        let figuresAmount = 0; //количество созданных фигур
-        const figure = []; //массив хранящий нашу фигуру
-        let NumberOfShapesPesSec = 1;
-
-        document.getElementById("GravityValue").innerHTML = gravity;
-        document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
-        PIXI.utils.skipHello();
+document.getElementById("GravityValue").innerHTML = gravity;
+document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
 
 
-class Model {
+const model = {
+   
 
-    createCanvas() {
-        
-        app = new PIXI.Application(appOptions);
-        document.getElementById("showPixi").appendChild(app.view); //выводим его в тело страницы 
-        document.getElementById("GravityValue").innerHTML = gravity;
-        document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
-    }
-
-    requestInterval( fn, delay ) {
+    requestInterval: function (fn, delay) {
         let requestAnimFrame = (function () {
           return window.requestAnimationFrame || function (callback) {
             window.setInterval(callback, 1000);
@@ -55,7 +38,7 @@ class Model {
         handle = {};
         function loop() {
           handle.value = requestAnimFrame(loop);
-          const current = new Date().getTime(),
+          let current = new Date().getTime(),
           delta = current - start;
           if (delta >= delay) {
             fn.call();
@@ -64,22 +47,21 @@ class Model {
         }
         handle.value = requestAnimFrame(loop);
         return handle;
-    }
+    },
 
-    drawShapes( x=0, y=0 ) {
-        let controller = new Controller();
+    drawShapes: function( x=0,y=0) {
 
-        const rand = Math.floor(Math.random() * colors.length);
+        let rand = Math.floor(Math.random() * colors.length);
         const inAreaX = width - 100; 
         const shapesY = y || -100; 
         const shapesX = x || Math.floor(Math.random() * inAreaX);
 
-        let shapes = new PIXI.Graphics(); //создаем новый графический элемент
+        const shapes = new PIXI.Graphics(); //создаем новый графический элемент
 
         shapes.beginFill(colors[rand], 1);
         const diffrendShapes = ['Triangle','Rect', 'Pentagon', 'Hexagon', 'Circle', 'Ellipse', 'Random'];
         const randShapes = controller.randomRange(0, diffrendShapes.length);//Math.floor(Math.random() * diffrendShapes.length);
-        const type = diffrendShapes[randShapes];
+        let type = diffrendShapes[randShapes];
         switch (type) {
             case 'Triangle':
                 shapes.moveTo(shapesX, shapesY);
@@ -99,7 +81,7 @@ class Model {
                 shapes.drawPolygon(pathPentagon);
                 break;
             case 'Hexagon':
-                let pathHexagon = [shapesX+50, shapesY,
+                const pathHexagon = [shapesX+50, shapesY,
                                      shapesX+100, shapesY+33, 
                                      shapesX+100, shapesY+66,
                                      shapesX+50, shapesY+99,  
@@ -108,7 +90,7 @@ class Model {
                 shapes.drawPolygon(pathHexagon);
                 break;
             case 'Circle':
-                let radius = controller.randomRange(30, 50); //радиус круга
+                const radius = controller.randomRange(30, 50); //радиус круга
                 shapes.drawCircle(shapesX, shapesY, radius); //рисуем круг
                 break;
             case 'Ellipse':
@@ -135,71 +117,52 @@ class Model {
         shapes.on('click', controller.clearFigure); //добавляем возможность при клике на фигуру удалить её            
                 
     }
-
-
 }
+const view = {
+    loadGame: function() {
+        model.createCanvas();
 
-class View {
-    
-}
+        controller.increasGravityValue();
+        controller.decreaseGravityValue();
+        controller.increasNumberOfFigure();
+        controller.decreaseNumberOfFigure();
+        controller.addShapesWithDbclick();
 
-class Controller {
-
-    constructor(model, view) {
-        this.model = model;
-        this.view = view;
-    }
-
-    loadGame() {
-        //let model = new Model();
-        //let controller = new Controller();
-        
-        this.model.createCanvas();
-        //let app =  this.model.getApp();
-        this.increasGravityValue();
-        this.decreaseGravityValue();
-        this.increasNumberOfFigure();
-        this.decreaseNumberOfFigure();
-        this.addShapesWithDbclick();
-
-        this.model.requestInterval(this.drawCirclePerSec,1000);
+        model.requestInterval(controller.drawCirclePerSec,1000);
 
         app.ticker.add(function() { //постоянное обновление холста
             
             for (let i = 0; i < figuresAmount; i++) {
                 figure[i].position.y += gravity; 
-               
                 if (figure[i].position.y > (height+110) && figure[i].live == true) {
-                    let countForDel = app.stage.children.filter(i => i.position.y > (height+110)).length;
-                    app.stage.children.splice(0, countForDel);
-                    
-                    figure[i].live = false;
                     figure[i].clear();
+                    figure[i].live = false;
                     let countShapesInArea = figure.filter(i => i.live === true).length;
                     let countSurfaceArea = figure.filter(i => i.live === true).reduce((total, i) => total+i.areaShapes, 0);
                     document.getElementById("NumberOfShapes").innerHTML = countShapesInArea;
-                    document.getElementById("surfaceArea").innerHTML = countSurfaceArea; 
-                    
+                    document.getElementById("surfaceArea").innerHTML = countSurfaceArea;
                 }
             }
         });
     }
+}
 
-    clearFigure() {
-       
-        figure[this.num].live = false;
+
+const controller = {
+    clearFigure: function() {
         figure.filter(i => i.type === this.type).map(i => i.tint = colors[Math.floor(Math.random() * colors.length)]);
+        figure[this.num].live = false;
         this.clear();
-    }
-    increasNumberOfFigure() {
+    },
+    increasNumberOfFigure: function() {
         [].forEach.call(document.querySelectorAll('.btnPlusNumber'), function(item) {
             item.addEventListener('click', function() {
                 NumberOfShapesPesSec++;
                  document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;    
             });
         });
-    }
-    decreaseNumberOfFigure() {
+    },
+    decreaseNumberOfFigure: function() {
         [].forEach.call(document.querySelectorAll('.btnMinusNumber'), function(item) {
             item.addEventListener('click', function() {
                 if(NumberOfShapesPesSec === 0) {
@@ -210,8 +173,8 @@ class Controller {
                  document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
             });
         });
-    }
-    increasGravityValue() {
+    },
+    increasGravityValue: function() {
         [].forEach.call(document.querySelectorAll('.btnPlusGravity'), function(item) {
             item.addEventListener('click', function() {
                  gravity++;
@@ -219,8 +182,8 @@ class Controller {
         
             });
         });
-    }
-    decreaseGravityValue() {
+    },
+    decreaseGravityValue: function() {
         [].forEach.call(document.querySelectorAll('.btnMinusGravity'), function(item) {
             item.addEventListener('click', function() {
                 if(gravity > 1) {
@@ -230,20 +193,17 @@ class Controller {
         
             });
         });
-    }
-    addShapesWithDbclick() {
-        
+    },
+    addShapesWithDbclick: function() {
         [].forEach.call(document.querySelectorAll('#showPixi'), function(item) {
             item.addEventListener('dblclick', function(e) {
-                this.model.drawShapes(e.layerX, e.layerY);
+                model.drawShapes(e.layerX, e.layerY);
             });
         });  
-    }
-    drawCirclePerSec() {
-        let model = new Model();
+    },
+    drawCirclePerSec: function() {
         let n = 1;
-            while( n <= NumberOfShapesPesSec ){
-
+            while(n<=NumberOfShapesPesSec){
                 model.drawShapes();
                 ++n;
                 let countShapesInArea = figure.filter(i => i.live === true).length;
@@ -251,12 +211,11 @@ class Controller {
                 let countSurfaceArea = figure.filter(i => i.live === true).reduce((total, i) => total+i.areaShapes, 0);
                 document.getElementById("surfaceArea").innerHTML = countSurfaceArea;
             }
-    }
-
-    randomRange(start, finish) {
+    },
+    randomRange: function(start, finish) {
       return  start + Math.floor(Math.random() * finish);
     }
 }
 
 
-
+view.loadGame();
