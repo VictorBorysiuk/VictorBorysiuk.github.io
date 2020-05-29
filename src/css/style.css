@@ -9,11 +9,8 @@
     width: 800px;
     height: 450px;
     margin: 50px auto;
-    /* color: #dbe4c5; */
 }
 #showPixi {
-    width: 800px;
-    height: 450px;
     border: 1px solid black;
 }
 .info {
