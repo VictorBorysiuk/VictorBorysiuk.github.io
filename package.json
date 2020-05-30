@@ -2,11 +2,15 @@
   "name": "victorborysiuk.github.io",
   "version": "1.0.0",
   "description": "simple game with PIXI JS",
-  "main": "index.html",
+  "main": "dist/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --mode development --open",
+<<<<<<< HEAD
     "build": "webpack --mode production"
+=======
+    "build": "webpack"
+>>>>>>> 9693dbf1d53e9c73000a216131f0810aa1dee845
   },
   "repository": {
     "type": "git",
@@ -24,6 +28,7 @@
   },
   "homepage": "https://github.com/VictorBorysiuk/VictorBorysiuk.github.io#readme",
   "devDependencies": {
+<<<<<<< HEAD
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.1",
     "@babel/node": "^7.10.1",
@@ -39,6 +44,11 @@
     "pixi.js": "^5.2.4",
     "style-loader": "^1.2.1",
     "uglifyjs-webpack-plugin": "^2.2.0",
+=======
+    "html-webpack-plugin": "^4.3.0",
+    "path": "^0.12.7",
+    "pixi.js": "^5.2.4",
+>>>>>>> 9693dbf1d53e9c73000a216131f0810aa1dee845
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"

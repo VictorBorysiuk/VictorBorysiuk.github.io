@@ -1,11 +1,21 @@
-let path = require('path');
+const path = require('path');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 let conf = {
-    entry: './src/index.js',
+    mode: 'development',
+    entry: {        
+        main: './src/index.js'
+    },
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: 'main.js'
+        filename:'[name].[contenthash].js'
+
     },
+    plugins:[
+        new HTMLWebpackPlugin({
+            template: './src/index.html'
+        })
+    ],
     devServer: {
         overlay: true
     },
