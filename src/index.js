@@ -1,19 +1,16 @@
 import * as PIXI from 'pixi.js';
 
 const main = () => {
-    const model = new Model();
-    const view = new View();
-    const controller = new Controller( model, view);
-
-    controller.loadGame();
-};
-
-window.onload = main;
-
     let app;
     let canvasContainer = document.getElementById("showPixi");
     let width = canvasContainer.innerWidth || 726;
     let height = canvasContainer.innerHeight || width/2;
+    const colors = [0xFFFF0B, 0xFF700B, 0x4286f4, 0x4286f4, 0xf441e8, 0x8dff6d, 0x41ccc9, 0xe03375, 0x95e032, 0x77c687, 0x43ba5b, 0x0ea3ba]; //массив цветов
+    let gravity = 4;
+    let figuresAmount = 0; //количество созданных фигур
+    const figure = []; //массив хранящий нашу фигуру
+    let NumberOfShapesPesSec = 1;
+
     let appOptions = {  
         width: width,
         height: height,
@@ -23,26 +20,38 @@ window.onload = main;
         backgroundColor: 0xdbe4c5,
         };
 
-        
-        const colors = [0xFFFF0B, 0xFF700B, 0x4286f4, 0x4286f4, 0xf441e8, 0x8dff6d, 0x41ccc9, 0xe03375, 0x95e032, 0x77c687, 0x43ba5b, 0x0ea3ba]; //массив цветов
-        let gravity = 4;
-        let figuresAmount = 0; //количество созданных фигур
-        const figure = []; //массив хранящий нашу фигуру
-        let NumberOfShapesPesSec = 1;
+    window.variables = {
+        app,
+        width,
+        height,
+        appOptions,
+        colors,
+        gravity,
+        figuresAmount,
+        figure,
+        NumberOfShapesPesSec        
+    };
+    const model = new Model();
+    const view = new View();
+    const controller = new Controller( model, view);
 
-        document.getElementById("GravityValue").innerHTML = gravity;
-        document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
-        PIXI.utils.skipHello();
+    controller.loadGame();
+};
+
+window.onload = main;
+     
 
 
 class Model {
+  
 
     createCanvas() {
         
-        app = new PIXI.Application(appOptions);
-        document.getElementById("showPixi").appendChild(app.view); //выводим его в тело страницы 
-        document.getElementById("GravityValue").innerHTML = gravity;
-        document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
+        window.variables.app = new PIXI.Application(window.variables.appOptions);
+        document.getElementById("showPixi").appendChild(window.variables.app.view); //выводим его в тело страницы 
+        document.getElementById("GravityValue").innerHTML = window.variables.gravity;
+        document.getElementById("NumberShapesPesSec").innerHTML = window.variables.NumberOfShapesPesSec;
+        PIXI.utils.skipHello();
     }
 
     requestInterval( fn, delay ) {
@@ -67,16 +76,19 @@ class Model {
     }
 
     drawShapes( x=0, y=0 ) {
-        let controller = new Controller();
 
-        const rand = Math.floor(Math.random() * colors.length);
-        const inAreaX = width - 100; 
+
+        
+        let controller = new Controller();
+        
+        const rand = Math.floor(Math.random() * window.variables.colors.length);
+        const inAreaX = window.variables.width - 100; 
         const shapesY = y || -100; 
         const shapesX = x || Math.floor(Math.random() * inAreaX);
 
         let shapes = new PIXI.Graphics(); //создаем новый графический элемент
 
-        shapes.beginFill(colors[rand], 1);
+        shapes.beginFill(window.variables.colors[rand], 1);
         const diffrendShapes = ['Triangle','Rect', 'Pentagon', 'Hexagon', 'Circle', 'Ellipse', 'Random'];
         const randShapes = controller.randomRange(0, diffrendShapes.length);//Math.floor(Math.random() * diffrendShapes.length);
         const type = diffrendShapes[randShapes];
@@ -124,19 +136,17 @@ class Model {
 
         shapes.interactive = true; //делаем круг интерактивным
         shapes.buttonMode = true; //меняем курсор при наведении
-        let pixels = app.renderer.extract.pixels(shapes);
+        let pixels = window.variables.app.renderer.extract.pixels(shapes);
         shapes.areaShapes = pixels.length;
         shapes.live = true; //указываем что наш шарик жив :)
         shapes.type = type;
-        figuresAmount++;
-        shapes.num = figuresAmount; //даем нашей фигуре порядковый номер
-        figure.push(shapes); //обратиться на прямую к объекту shapes мы не можем, поэтому отправляем его в массив
-        app.stage.addChild(shapes); //выводим фигуру на холст
+        window.variables.figuresAmount++;
+        shapes.num = window.variables.figuresAmount; //даем нашей фигуре порядковый номер
+        window.variables.figure.push(shapes); //обратиться на прямую к объекту shapes мы не можем, поэтому отправляем его в массив
+        window.variables.app.stage.addChild(shapes); //выводим фигуру на холст
         shapes.on('click', controller.clearFigure); //добавляем возможность при клике на фигуру удалить её            
                 
     }
-
-
 }
 
 class View {
@@ -148,35 +158,38 @@ class Controller {
     constructor(model, view) {
         this.model = model;
         this.view = view;
-    }
-
-    loadGame() {
-        //let model = new Model();
-        //let controller = new Controller();
         
+    }
+    
+    loadGame() {
+        console.log(this.model);
         this.model.createCanvas();
-        //let app =  this.model.getApp();
+        
+        console.log(this.model.__proto__.drawShapes);
+       
+        
+        
         this.increasGravityValue();
         this.decreaseGravityValue();
         this.increasNumberOfFigure();
         this.decreaseNumberOfFigure();
         this.addShapesWithDbclick();
 
+        //this.model.requestInterval(this.model.drawShapes,1000);
         this.model.requestInterval(this.drawCirclePerSec,1000);
 
-        app.ticker.add(function() { //постоянное обновление холста
+        window.variables.app.ticker.add(function() { //постоянное обновление холста
             
-            for (let i = 0; i < figuresAmount; i++) {
-                figure[i].position.y += gravity; 
-               
-                if (figure[i].position.y > (height+110) && figure[i].live == true) {
-                    let countForDel = app.stage.children.filter(i => i.position.y > (height+110)).length;
-                    app.stage.children.splice(0, countForDel);
-                    
-                    figure[i].live = false;
-                    figure[i].clear();
-                    let countShapesInArea = figure.filter(i => i.live === true).length;
-                    let countSurfaceArea = figure.filter(i => i.live === true).reduce((total, i) => total+i.areaShapes, 0);
+            for (let i = 0; i <window.variables.figuresAmount; i++) {
+                window.variables.figure[i].position.y += window.variables.gravity; 
+                
+                if ( window.variables.figure[i].position.y > (window.variables.height+110) && window.variables.figure[i].live == true) {
+                    let countForDel = window.variables.app.stage.children.filter(i => i.position.y > (window.variables.height+110)).length;
+                    window.variables.app.stage.children.splice(0, countForDel);                    
+                    window.variables.figure[i].live = false;
+                    window.variables.figure[i].clear();
+                    let countShapesInArea = window.variables.figure.filter(i => i.live === true).length;
+                    let countSurfaceArea = window.variables.figure.filter(i => i.live === true).reduce((total, i) => total+i.areaShapes, 0);
                     document.getElementById("NumberOfShapes").innerHTML = countShapesInArea;
                     document.getElementById("surfaceArea").innerHTML = countSurfaceArea; 
                     
@@ -185,37 +198,51 @@ class Controller {
         });
     }
 
+    drawCirclePerSec() {
+        let model = new Model();
+        let n = 1;
+            while(n<=window.variables.NumberOfShapesPesSec){
+
+                model.drawShapes();
+                ++n;
+                let countShapesInArea = window.variables.figure.filter(i => i.live === true).length;
+                document.getElementById("NumberOfShapes").innerHTML = countShapesInArea;
+                let countSurfaceArea = window.variables.figure.filter(i => i.live === true).reduce((total, i) => total+i.areaShapes, 0);
+                document.getElementById("surfaceArea").innerHTML = countSurfaceArea;
+            }
+    }
+
     clearFigure() {
        
-        figure[this.num].live = false;
-        figure.filter(i => i.type === this.type).map(i => i.tint = colors[Math.floor(Math.random() * colors.length)]);
-        this.clear();
+        window.variables.figure[this.num].live = false;
+        window.variables.figure.filter(i => i.type === this.type).map(i => i.tint = window.variables.colors[Math.floor(Math.random() * window.variables.colors.length)]);
+        window.variables.figure[this.num].clear();
     }
     increasNumberOfFigure() {
         [].forEach.call(document.querySelectorAll('.btnPlusNumber'), function(item) {
             item.addEventListener('click', function() {
-                NumberOfShapesPesSec++;
-                 document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;    
+                window.variables.NumberOfShapesPesSec++;
+                 document.getElementById("NumberShapesPesSec").innerHTML = window.variables.NumberOfShapesPesSec;    
             });
         });
     }
     decreaseNumberOfFigure() {
         [].forEach.call(document.querySelectorAll('.btnMinusNumber'), function(item) {
             item.addEventListener('click', function() {
-                if(NumberOfShapesPesSec === 0) {
-                    NumberOfShapesPesSec = 0;
+                if(window.variables.NumberOfShapesPesSec === 0) {
+                    window.variables.NumberOfShapesPesSec = 0;
                 } else {
-                    NumberOfShapesPesSec--;
+                    window.variables.NumberOfShapesPesSec--;
                 }
-                 document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
+                 document.getElementById("NumberShapesPesSec").innerHTML = window.variables.NumberOfShapesPesSec;
             });
         });
     }
     increasGravityValue() {
         [].forEach.call(document.querySelectorAll('.btnPlusGravity'), function(item) {
             item.addEventListener('click', function() {
-                 gravity++;
-                 document.getElementById("GravityValue").innerHTML = gravity;
+                window.variables.gravity++;
+                 document.getElementById("GravityValue").innerHTML = window.variables.gravity;
         
             });
         });
@@ -223,10 +250,10 @@ class Controller {
     decreaseGravityValue() {
         [].forEach.call(document.querySelectorAll('.btnMinusGravity'), function(item) {
             item.addEventListener('click', function() {
-                if(gravity > 1) {
-                    gravity--;
+                if(window.variables.gravity > 1) {
+                    window.variables.gravity--;
                 }
-                 document.getElementById("GravityValue").innerHTML = gravity;
+                 document.getElementById("GravityValue").innerHTML = window.variables.gravity;
         
             });
         });
@@ -235,22 +262,9 @@ class Controller {
         
         [].forEach.call(document.querySelectorAll('#showPixi'), function(item) {
             item.addEventListener('dblclick', function(e) {
-                this.model.drawShapes(e.layerX, e.layerY);
+                window.variables.drawShapes(e.layerX, e.layerY);
             });
         });  
-    }
-    drawCirclePerSec() {
-        let model = new Model();
-        let n = 1;
-            while( n <= NumberOfShapesPesSec ){
-
-                model.drawShapes();
-                ++n;
-                let countShapesInArea = figure.filter(i => i.live === true).length;
-                document.getElementById("NumberOfShapes").innerHTML = countShapesInArea;
-                let countSurfaceArea = figure.filter(i => i.live === true).reduce((total, i) => total+i.areaShapes, 0);
-                document.getElementById("surfaceArea").innerHTML = countSurfaceArea;
-            }
     }
 
     randomRange(start, finish) {
