@@ -1,89 +1,46 @@
 export default class Controller {
+
     constructor(model, view) {
         this.model = model;
         this.view = view;
-    }
-
-    init(){
-        this.view.createCanvas();
         
-        this.increasGravityValue();
-        this.decreaseGravityValue();
-        this.increasNumberOfFigure();
-        this.decreaseNumberOfFigure();
-        this.addShapesWithDbclick();
+    }
+    
+    loadGame() {
 
-        this.model.requestInterval(this.drawCirclePerSec,1000);
-    }
+    this.view.createCanvas();
 
-    showMessage() {
-        //this.view.render(this.model.data);
-        console.log(this.view.createCanvas());
-    }
-    clearFigure() {
-        figure.filter(i => i.type === this.type).map(i => i.tint = colors[Math.floor(Math.random() * colors.length)]);
-        figure[this.num].live = false;
-        this.clear();
-    }
-    increasNumberOfFigure() {
-        [].forEach.call(document.querySelectorAll('.btnPlusNumber'), function(item) {
-            item.addEventListener('click', function() {
-                NumberOfShapesPesSec++;
-                 document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;    
-            });
-        });
-    }
-    decreaseNumberOfFigure() {
-        [].forEach.call(document.querySelectorAll('.btnMinusNumber'), function(item) {
-            item.addEventListener('click', function() {
-                if(NumberOfShapesPesSec === 0) {
-                    NumberOfShapesPesSec = 0;
-                } else {
-                    NumberOfShapesPesSec--;
+    this.view.increasGravityValue();
+    this.view.decreaseGravityValue();
+    this.view.increasNumberOfFigure();
+    this.view.decreaseNumberOfFigure();
+    this.view.addShapesWithDbclick();
+    
+    this.view.requestInterval(() => {this.view.drawCirclePerSec},1000);
+
+    window.variables.app.ticker.add(function() { //постоянное обновление холста
+            
+            for (let i = 0; i <window.variables.figuresAmount; i++) {
+                window.variables.figure[i].position.y += window.variables.gravity; 
+                
+                if ( window.variables.figure[i].position.y > (window.variables.height+110) && window.variables.figure[i].live == true) {
+
+                    let countForDel = window.variables.app.stage.children.filter(i => i.position.y > (window.variables.height+110)).length;
+                    window.variables.app.stage.children.splice(0, countForDel);
+
+                    window.variables.figure[i].live = false;
+                    window.variables.figure[i].clear();
+
+                    let countShapesInArea = window.variables.figure.filter(i => i.live === true).length;
+                    let countSurfaceArea = window.variables.figure.filter(i => i.live === true).reduce((total, i) => total+i.areaShapes, 0);
+
+                    document.getElementById("NumberOfShapes").innerHTML = countShapesInArea;
+                    document.getElementById("surfaceArea").innerHTML = countSurfaceArea; 
+                    
                 }
-                 document.getElementById("NumberShapesPesSec").innerHTML = NumberOfShapesPesSec;
-            });
-        });
-    }
-    increasGravityValue() {
-        [].forEach.call(document.querySelectorAll('.btnPlusGravity'), function(item) {
-            item.addEventListener('click', function() {
-                 gravity++;
-                 document.getElementById("GravityValue").innerHTML = gravity;
-        
-            });
-        });
-    }
-    decreaseGravityValue() {
-        [].forEach.call(document.querySelectorAll('.btnMinusGravity'), function(item) {
-            item.addEventListener('click', function() {
-                if(gravity > 1) {
-                    gravity--;
-                }
-                 document.getElementById("GravityValue").innerHTML = gravity;
-        
-            });
-        });
-    }
-    addShapesWithDbclick() {
-        [].forEach.call(document.querySelectorAll('#showPixi'), function(item) {
-            item.addEventListener('dblclick', function(e) {
-                model.drawShapes(e.layerX, e.layerY);
-            });
-        });  
-    }
-    drawCirclePerSec() {
-        let n = 1;
-            while(n<=NumberOfShapesPesSec){
-                model.drawShapes();
-                ++n;
-                let countShapesInArea = figure.filter(i => i.live === true).length;
-                document.getElementById("NumberOfShapes").innerHTML = countShapesInArea;
-                let countSurfaceArea = figure.filter(i => i.live === true).reduce((total, i) => total+i.areaShapes, 0);
-                document.getElementById("surfaceArea").innerHTML = countSurfaceArea;
             }
+        });
     }
-    randomRange(start, finish) {
-      return  start + Math.floor(Math.random() * finish);
-    }
+
+    
 }
