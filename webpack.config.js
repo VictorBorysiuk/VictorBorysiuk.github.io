@@ -2,7 +2,7 @@ const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 let conf = {
-    mode: 'development',
+    mode: 'production',
     entry: {        
         main: './src/index.js'
     },
